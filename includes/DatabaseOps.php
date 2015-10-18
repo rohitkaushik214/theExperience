@@ -1,6 +1,15 @@
 <?php
 
-class DatabaseOps {
+require_once 'IDatabaseOps.php';
+require_once '../Helpers/DatabaseHelper.php';
+
+class DatabaseFetchResult {
+
+	public $bSuccess;
+	public $aFetchResults;
+}
+
+class DatabaseOps implements IDatabaseOps {
 
 	private $_sHostName;
 	private $_sDatabaseUserName;
@@ -19,6 +28,7 @@ class DatabaseOps {
 		$this->_sDatabasePassword = $sDatabasePassword;
 		$this->_DatabaseUserName  = $sDatabaseUserName;
 		//Check for the up-state of the database server (call pingDatabaseServer method) and accordingly set the IsDatabaseServerUp flag.
+		$this->_oDatabaseConnection = $this->getPDOObject();
 	}
 
 	public function getPDOObject()
@@ -35,25 +45,12 @@ class DatabaseOps {
 		return $this->_oDatabaseConnection;
 	}
 
-	public static function getQuestionMarkSequence($iQuestions)
-	{
-		$sQuestionSequence = '';
-		for ($iCounter = 1 ; $iCounter <= $iQuestions; $iCounter++)
-		{
-			$sQuestionSequence.='?,';
-		}
-		$sQuestionSequence = rtrim($sQuestionSequence,',');
-
-		return $sQuestionSequence;
-	}
-
 	public function prepareInsertQuery($sTableName, $aRecord)
 	{
-		$sQuery       = '';
 		$aRecordKeys  = array_keys($aRecord);
 		$sRecordKeys  = implode(',', $aRecordKeys);
-		$sQuestionSequence = self::getQuestionMarkSequence(count($aRecordKeys));
-		$sQuery = 'INSERT INTO ' . $sTableName . ' ('.$sRecordKeys . ')' . ' VALUES (' . $sQuestionSequence. ')';
+		$sQuestionSequence = DatabaseHelper::getQuestionMarkSequence(count($aRecordKeys));
+		$sQuery = 'INSERT INTO ' . $sTableName . ' (' . $sRecordKeys . ')' . ' VALUES (' . $sQuestionSequence. ')';
 		//Validate the query via a regular expression and log it, of-course.
 
 		return $sQuery;
@@ -97,20 +94,47 @@ class DatabaseOps {
 		{
 			$sQuery.=' WHERE '.$sFilterLogic;
 		}
-		//Impelement for orderby and groupby clauses.
+		//Implement for <> conditions.
+		//Implement for orderby and groupby clauses.
 		//Implement for JOINS here and sub-sql queries.
 
 		return $sQuery;
 	}
 
-
-	public function prepareDeleteQuery($sTableName, $aRecords, $aFilters)
+	public function fireQuery($sQuery, $aValues, $bFetchResults)
 	{
+		$oQueryResult = new DatabaseFetchResult();
+		$oQueryResult->bSuccess = TRUE;
+		$aArrayValues = array_values($aValues);
+		try {
+			$oStatement = $this->_oDatabaseConnection->prepare($sQuery);
+			$oStatement->execute($aArrayValues);
 
+			if ($bFetchResults) {
+				$oQueryResult->aFetchResults = $oStatement->fetchAll(PDO::FETCH_ASSOC);
+			}
+		}
+		catch (Exception $oException)
+		{
+			$oQueryResult->bSuccess      = FALSE;
+			$oQueryResult->aFetchResults['message']    = $oException->getMessage();
+			$oQueryResult->aFetchResults['stackTrace'] = $oException->getTrace();
+		}
+		return $oQueryResult;
+	}
+
+
+	public function prepareDeleteQuery($sTableName, $aRecordIds, $sRecordIDParameter)
+	{
+		$sQuestionSequence = DatabaseHelper::getQuestionMarkSequence(count($aRecordIds));
+		$sQuery  = 'DELETE FROM '. $sTableName. ' WHERE ' . $sRecordIDParameter . ' IN (' . $sQuestionSequence . ')' ;
+
+		return $sQuery;
 	}
 
 	public function prepareUpdateQuery($sTableName, $aUpdateRecords, $aFilters)
 	{
+		//update Expense set adsad = '' and
 
 	}
 
