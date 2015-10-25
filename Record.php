@@ -2,20 +2,32 @@
 
 //Parent class of all the records and models.
 require_once 'IRecord.php';
+require_once 'includes/DatabaseOps.php';
 class Record implements IRecord
 {
-	private $oRecord;
-	private $sRecordType;
 	private $oDatabaseConnection;
+	private $oRecord;
+	private $aRecordProperties;
 
-	public function __construct(IRecord $oRecord)
+	public function __construct(IEntity $oRecordObject)
 	{
-		$this->oRecord     = $oRecord;
-		$this->sRecordType = get_class($oRecord);
+		/*
+		 * @Todo: Inject logged in user too. Think about it.
+		 */
 		if($this->oDatabaseConnection == NULL)
 		{
 			$this->oDatabaseConnection = new DatabaseOps();
 		}
+		$this->oRecord = $oRecordObject;
+		$this->aRecordProperties = $oRecordObject->getAllProperties();
+	}
+
+
+	public function getSetRecord()
+	{
+		DatabaseHelper::getRecordMappings(get_class($this->oRecord));
+
+		return $this->oRecord;
 	}
 
 	public function handleFailedSQLOperation($sQuery, $oResult)
@@ -34,8 +46,10 @@ class Record implements IRecord
 	public function createRecord()
 	{
 		$bSuccess = TRUE;
-		$sQuery   = $this->oDatabaseConnection->prepareInsertQuery($this->sRecordType, $this->oRecord);
-		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $this->oRecord, FALSE);
+		//Replace this by a static method helper.
+		$sTableName = get_class($this->oRecord);
+		$sQuery   = $this->oDatabaseConnection->prepareInsertQuery($sTableName, $this->aRecordProperties);
+		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery,$this->aRecordProperties, FALSE);
 
 		if($oResult->bSuccess == FALSE) {
 			$bSuccess = FALSE;
@@ -44,18 +58,17 @@ class Record implements IRecord
 		return $bSuccess;
 	}
 
-	public function getRecords($aSelectColumns, $bUseFilterLogic, $sFilterLogic, $aFilters, $bUseTop, $iTop, $sGroupBy,
+	public function getRecords( $aSelectColumns, $bUseFilterLogic, $sFilterLogic, $aFilters, $bUseTop, $iTop, $sGroupBy,
 							   $sOrderByColumn, $sOrderBySequence )
 	{
-		$bSuccess = TRUE;
-		$sQuery   = $this->oDatabaseConnection->prepareSelectQuery($this->sRecordType, $aSelectColumns,
+		$sTableName = get_class($this->oRecord);
+		$sQuery   = $this->oDatabaseConnection->prepareSelectQuery($sTableName, $aSelectColumns,
 			$bUseFilterLogic, $sFilterLogic, $aFilters, $bUseTop, $iTop, $sGroupBy, $sOrderByColumn, $sOrderBySequence);
-		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $this->oRecord, TRUE);
+		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $this->aRecordProperties, TRUE);
 
 		if($oResult->bSuccess == FALSE || !is_array($oResult->aFetchResults) || empty($oResult->aFetchResults)) {
-			$bSuccess = FALSE;
 			$this->handleFailedSQLOperation($sQuery,$oResult);
-			return $bSuccess;
+			return FALSE;
 		}
 
 		return $oResult->aFetchResults;
@@ -66,8 +79,9 @@ class Record implements IRecord
 		/*
 		 * @Todo: Re-think about it.
 		 */
+		$sTableName = get_class($this->oRecord);
 		$bSuccess = TRUE;
-		$sQuery   = $this->oDatabaseConnection->prepareUpdateQuery($this->sRecordType, $aUpdateRecords, $aFilters);
+		$sQuery   = $this->oDatabaseConnection->prepareUpdateQuery($sTableName, $aUpdateRecords, $aFilters);
 		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $aFilters, FALSE);
 		if($oResult->bSuccess == FALSE) {
 			$bSuccess = FALSE;
@@ -81,14 +95,32 @@ class Record implements IRecord
 	public function deleteRecord($aRecordIds, $sRecordIDParameter)
 	{
 		$bSuccess = TRUE;
-		$sQuery   = $this->oDatabaseConnection->prepareDeleteQuery($this->sRecordType, $aRecordIds, $sRecordIDParameter);
-		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $aRecordIds, FALSE);
-		if($oResult->bSuccess == FALSE) {
+		$sTableName = get_class($this->oRecord);
+		$sQuery = $this->oDatabaseConnection->prepareDeleteQuery($sTableName, $aRecordIds, $sRecordIDParameter);
+		$oResult = $this->oDatabaseConnection->fireQuery($sQuery, $aRecordIds, FALSE);
+		if ($oResult->bSuccess == FALSE) {
 			$bSuccess = FALSE;
-			$this->handleFailedSQLOperation($sQuery,$oResult);
+			$this->handleFailedSQLOperation($sQuery, $oResult);
 		}
 
 		return $bSuccess;
+	}
+
+	public function getRecordByID($sRecordType, $sRecordIDName, $iRecordID)
+	{
+		$aFilters = array();
+		array_push($aFilters, $sRecordIDName);
+		$sQuery   = $this->oDatabaseConnection->prepareSelectQuery($sRecordType, array(), FALSE, '', $aFilters);
+		$aValues  = array();
+		array_push($aFilters,$iRecordID);
+		$oResult = $this->oDatabaseConnection->fireQuery($sQuery,$aValues, TRUE);
+		if($oResult->bSuccess == FALSE || !is_array($oResult->aFetchResults) || empty($oResult->aFetchResults)) {
+			$bSuccess = FALSE;
+			$this->handleFailedSQLOperation($sQuery,$oResult);
+			return $bSuccess;
+		}
+
+		return $oResult->aFetchResults;
 	}
 
 }

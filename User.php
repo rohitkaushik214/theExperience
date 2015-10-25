@@ -1,7 +1,7 @@
-<?php 
+<?php
 
-
-public class User extends IGroupOrUser {
+require_once 'IGroupOrUser.php';
+class User implements IGroupOrUser {
 
 
 	//****************PRIVATE PROPERTIES********************
@@ -23,7 +23,7 @@ public class User extends IGroupOrUser {
 	// ******INTERFACE METHODS***************************
 	public function getName($iUserId) 
 	{
-		if(!$bIsAuthenticated) {
+		if(!$this->bIsAuthenticated) {
 			return FALSE;
 		}
 
@@ -31,7 +31,7 @@ public class User extends IGroupOrUser {
 
 	public function getFullName($iUserId) 
 	{
-		if(!$bIsAuthenticated) {
+		if(!$this->bIsAuthenticated) {
 			return FALSE;
 		}
 
@@ -41,7 +41,7 @@ public class User extends IGroupOrUser {
 	public function getProfile($iUserId) 
 	{
 		$sProfileInfo = '';
-		if(!$bIsAuthenticated) {
+		if(!$this->bIsAuthenticated) {
 			return FALSE;
 		}
 		else if(!empty($aProfileInfo)) {

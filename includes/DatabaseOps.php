@@ -21,24 +21,26 @@ class DatabaseOps implements IDatabaseOps {
 
 	///////////////////////// PUBLIC FUNCTIONS /////////////////////////////////////////////////
 
-	public function __construct($sHostName='localhost', $sDatabaseName='theexperience', $sDatabasePassword='', $sDatabaseUserName ='root')
+	public function __construct($sHostName='localhost', $sDatabaseName='theexperience', $sDatabasePassword='',
+								$sDatabaseUserName ='root')
 	{
 		$this->_sHostName         = $sHostName;
 		$this->_sDatabaseName     = $sDatabaseName;
 		$this->_sDatabasePassword = $sDatabasePassword;
 		$this->_DatabaseUserName  = $sDatabaseUserName;
-		//Check for the up-state of the database server (call pingDatabaseServer method) and accordingly set the IsDatabaseServerUp flag.
 		$this->_oDatabaseConnection = $this->getPDOObject();
+		//Check for the up-state of the database server (call pingDatabaseServer method) and accordingly set the IsDatabaseServerUp flag.
 	}
 
 	public function getPDOObject()
 	{
+		//Check if everything is set before assigning.
 		$sHostName         = $this->_sHostName;
 		$sDatabaseUserName = $this->_sDatabaseUserName;
 		$sDatabasePassword = $this->_sDatabasePassword;
 		$sDatabaseName     = $this->_sDatabaseName;
 		if($this->_oDatabaseConnection == NULL)
-		{		
+		{
 			$this->_oDatabaseConnection = new PDO("mysql:host=$sHostName;dbname=$sDatabaseName", $sDatabaseUserName, $sDatabasePassword);
 		}
 
@@ -56,9 +58,9 @@ class DatabaseOps implements IDatabaseOps {
 		return $sQuery;
 	}
 
-	public function prepareSelectQuery($sTableName,$aSelectColumns, $bUseFilterLogic,
-									   $sFilterLogic ='', $aFilters, $bUseTop, $iTop=0, $sGroupBy,
-									   $sOrderByColumn, $sOrderBySequence)
+	public function prepareSelectQuery($sTableName, $aSelectColumns = array(), $bUseFilterLogic = FALSE,
+									   $sFilterLogic ='', $aFilters = array(), $bUseTop = FALSE, $iTop=0, $sGroupBy='',
+									   $sOrderByColumn = '', $sOrderBySequence='')
 	{
 		/*
 		 * @Todo: Create a separate library for all creating all the SQL stuff.
@@ -135,6 +137,10 @@ class DatabaseOps implements IDatabaseOps {
 	public function prepareUpdateQuery($sTableName, $aUpdateRecords, $aFilters)
 	{
 		//update Expense set adsad = '' and
+		$sQuery ='';
+
+		return $sQuery;
+
 
 	}
 

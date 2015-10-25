@@ -1,31 +1,162 @@
 <?php
 
-public class Expense {
+class Expense implements IEntity{
 
-	private $iExpenseID;
-	private $iExpenseName;
+	private $sExpenseName;
 	private $bIsExpensePrivate;
+	private $sExpenseCategory;
+	private $sExpenseSubCategory;
+	private $sExpenseAmount;
+	private $sExpenseDate;
+	private $sExpenseTime;
 	private $aExpenseMembersShared;// Ids of the members sharing the expenditure.
 
-	public function createNewExpense()
-	{
 
+	/**
+	 * @return mixed
+	 */
+	public function getIsExpensePrivate()
+	{
+		return $this->bIsExpensePrivate;
 	}
 
-	public function updateExpense()
+	/**
+	 * @param mixed $bIsExpensePrivate
+	 */
+	public function setIsExpensePrivate($bIsExpensePrivate)
 	{
-
+		$this->bIsExpensePrivate = $bIsExpensePrivate;
 	}
 
-	public function deleteExpense()
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseName()
 	{
+		return $this->sExpenseName;
+	}
 
+	/**
+	 * @param mixed $sExpenseName
+	 */
+	public function setExpenseName($sExpenseName)
+	{
+		$this->sExpenseName = $sExpenseName;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseCategory()
+	{
+		return $this->sExpenseCategory;
+	}
+
+	/**
+	 * @param mixed $sExpenseCategory
+	 */
+	public function setExpenseCategory($sExpenseCategory)
+	{
+		$this->sExpenseCategory = $sExpenseCategory;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseSubCategory()
+	{
+		return $this->sExpenseSubCategory;
+	}
+
+	/**
+	 * @param mixed $sExpenseSubCategory
+	 */
+	public function setExpenseSubCategory($sExpenseSubCategory)
+	{
+		$this->sExpenseSubCategory = $sExpenseSubCategory;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseDate()
+	{
+		return $this->sExpenseDate;
+	}
+
+	/**
+	 * @param mixed $sExpenseDate
+	 */
+	public function setExpenseDate($sExpenseDate)
+	{
+		$this->sExpenseDate = $sExpenseDate;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseAmount()
+	{
+		return $this->sExpenseAmount;
+	}
+
+	/**
+	 * @param mixed $sExpenseAmount
+	 */
+	public function setExpenseAmount($sExpenseAmount)
+	{
+		$this->sExpenseAmount = $sExpenseAmount;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseTime()
+	{
+		return $this->sExpenseTime;
+	}
+
+	/**
+	 * @param mixed $sExpenseTime
+	 */
+	public function setExpenseTime($sExpenseTime)
+	{
+		$this->sExpenseTime = $sExpenseTime;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getExpenseMembersShared()
+	{
+		return $this->aExpenseMembersShared;
+	}
+
+	/**
+	 * @param mixed $aExpenseMembersShared
+	 */
+	public function setExpenseMembersShared($aExpenseMembersShared)
+	{
+		$this->aExpenseMembersShared = $aExpenseMembersShared;
+	}
+
+	public function getAllProperties()
+	{
+		$aProperties = array();
+		$aProperties['IsExpensePrivate']   = $this->bIsExpensePrivate;
+		$aProperties['ExpenseSubCategory'] = $this->sExpenseSubCategory;
+		$aProperties['ExpenseDate']        = $this->sExpenseDate;
+		$aProperties['ExpenseName']        = $this->sExpenseName;
+		$aProperties['ExpenseAmount']      = $this->sExpenseAmount;
+		$aProperties['ExpenseCategory']    = $this->sExpenseCategory;
+
+		return $aProperties;
 	}
 
 }
 
-
-public class ExpenseMethods {
+/*
+class ExpenseMethods {
 
 	public function __construct() {
 
@@ -33,9 +164,7 @@ public class ExpenseMethods {
 
 	public function storeExpense($oExpense)
 	{
-		$oRecord = new Record();
-		$oRecord->createRecord($oExpense, get_class($oExpense));
-		$oRecord->storeRecord();
+
 	}
 
 	public function getAllExpensesForUser($iUserID) 
@@ -59,3 +188,4 @@ public class ExpenseMethods {
 	}
 
 }
+*/

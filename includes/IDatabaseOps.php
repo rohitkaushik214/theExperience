@@ -1,6 +1,7 @@
 <?php
 interface IDatabaseOps
 {
+
     public function getPDOObject();
     public function prepareInsertQuery($sTableName,$aRecord);
     public function prepareSelectQuery($sTableName,$aSelectColumns, $bUseFilterLogic,

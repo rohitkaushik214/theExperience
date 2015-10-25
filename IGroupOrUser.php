@@ -1,6 +1,6 @@
 <?php
 
-public interface IGroupOrUser {
+interface IGroupOrUser {
 
 	//Get User Name
 	public function getName($iUserId);

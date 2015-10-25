@@ -1,6 +1,6 @@
 <?php
 
-public abstract class TaskStatus {
+ abstract class TaskStatus {
 
 	const NotCompleted   = 2;
 	const Completed      = 1;
@@ -11,7 +11,7 @@ public abstract class TaskStatus {
 
 // "Will be there","Pending","Not Sure","Nope"
 
-public abstract class MemberStatusSelect {
+ abstract class MemberStatusSelect {
 
 	const YesStatus     = 1;
 	const NoStatus      = 2;

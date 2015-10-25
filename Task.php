@@ -1,7 +1,7 @@
 <?php
 
 //Include Status enums
-public class Task extends Record {
+class Task extends Record {
 
 	private $iTaskID;
 	private $iTaskName;

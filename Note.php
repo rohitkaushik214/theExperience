@@ -1,6 +1,6 @@
 <?php
 
-public class Note() {
+class Note {
 	
 	private $sNoteName;
 	private $iNoteUserName;

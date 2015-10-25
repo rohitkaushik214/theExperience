@@ -1,6 +1,7 @@
 <?php
 
-public class Group extends IGroupOrUser {
+require_once 'IGroupOrUser.php';
+ class Group implements IGroupOrUser {
 
 	//***********************PRIVATE  PROPERTIES *****************************
 	private $iGroupId;
@@ -20,7 +21,7 @@ public class Group extends IGroupOrUser {
 
 	}
 
-	public function getProfile()
+	public function getProfile($iUserId)
 	{
 		//Get the profile pic file location, members involved and other stuff.
 	}
@@ -40,6 +41,14 @@ public class Group extends IGroupOrUser {
 
 	}
 
+	 public function getFullName($iUserId)
+	 {
 
+	 }
+
+	 public function getName($iUserId)
+	 {
+
+	 }
 
 }

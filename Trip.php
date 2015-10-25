@@ -1,6 +1,6 @@
 <?php
 
-public class Trip {
+class Trip {
 
 	private $iTripId;
 	private $iTripDate;
