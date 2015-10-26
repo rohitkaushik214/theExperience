@@ -47,8 +47,9 @@ class ExpenseOperations implements IEntityOperations
         $aRecordIds = array();
         array_push($aRecordIds, $iExpenseID);
         $oExpense = new Expense();
-        $oRecord  = new Record(new Expense());
+        $oRecord  = new Record($oExpense);
         $bSuccess = $oRecord->deleteRecord($aRecordIds, self::getIDColumnName());
+        return $bSuccess;
     }
 
     public function updateEntity($iExpenseID, $aProperties)

@@ -1,6 +1,6 @@
 <?php
 
-require_once 'IGroupOrUser.php';
+require_once 'interfaces/IGroupOrUser.php';
 class User implements IGroupOrUser {
 
 

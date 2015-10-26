@@ -18,14 +18,14 @@ class Record implements IRecord
 		{
 			$this->oDatabaseConnection = new DatabaseOps();
 		}
-		$this->oRecord = $oRecordObject;
+		$this->oRecord           = $oRecordObject;
 		$this->aRecordProperties = $oRecordObject->getAllProperties();
 	}
 
 
 	public function getSetRecord()
 	{
-		DatabaseHelper::getRecordMappings(get_class($this->oRecord));
+		RecordHelper::getRecordMappings(get_class($this->oRecord));
 
 		return $this->oRecord;
 	}
@@ -47,7 +47,7 @@ class Record implements IRecord
 	{
 		$bSuccess = TRUE;
 		//Replace this by a static method helper.
-		$sTableName = get_class($this->oRecord);
+		$sTableName = RecordHelper::getRecordMappings(get_class($this->oRecord));
 		$sQuery   = $this->oDatabaseConnection->prepareInsertQuery($sTableName, $this->aRecordProperties);
 		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery,$this->aRecordProperties, FALSE);
 
@@ -61,7 +61,7 @@ class Record implements IRecord
 	public function getRecords( $aSelectColumns, $bUseFilterLogic, $sFilterLogic, $aFilters, $bUseTop, $iTop, $sGroupBy,
 							   $sOrderByColumn, $sOrderBySequence )
 	{
-		$sTableName = get_class($this->oRecord);
+		$sTableName = RecordHelper::getRecordMappings(get_class($this->oRecord));
 		$sQuery   = $this->oDatabaseConnection->prepareSelectQuery($sTableName, $aSelectColumns,
 			$bUseFilterLogic, $sFilterLogic, $aFilters, $bUseTop, $iTop, $sGroupBy, $sOrderByColumn, $sOrderBySequence);
 		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $this->aRecordProperties, TRUE);
@@ -79,7 +79,7 @@ class Record implements IRecord
 		/*
 		 * @Todo: Re-think about it.
 		 */
-		$sTableName = get_class($this->oRecord);
+		$sTableName = RecordHelper::getRecordMappings(get_class($this->oRecord));
 		$bSuccess = TRUE;
 		$sQuery   = $this->oDatabaseConnection->prepareUpdateQuery($sTableName, $aUpdateRecords, $aFilters);
 		$oResult  = $this->oDatabaseConnection->fireQuery($sQuery, $aFilters, FALSE);
@@ -94,10 +94,10 @@ class Record implements IRecord
 
 	public function deleteRecord($aRecordIds, $sRecordIDParameter)
 	{
-		$bSuccess = TRUE;
-		$sTableName = get_class($this->oRecord);
-		$sQuery = $this->oDatabaseConnection->prepareDeleteQuery($sTableName, $aRecordIds, $sRecordIDParameter);
-		$oResult = $this->oDatabaseConnection->fireQuery($sQuery, $aRecordIds, FALSE);
+		$bSuccess   = TRUE;
+		$sTableName = RecordHelper::getRecordMappings(get_class($this->oRecord));
+		$sQuery     = $this->oDatabaseConnection->prepareDeleteQuery($sTableName, $aRecordIds, $sRecordIDParameter);
+		$oResult    = $this->oDatabaseConnection->fireQuery($sQuery, $aRecordIds, FALSE);
 		if ($oResult->bSuccess == FALSE) {
 			$bSuccess = FALSE;
 			$this->handleFailedSQLOperation($sQuery, $oResult);
